@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lab Monitor</title>
+    <title>RFID Scanner - Lab Monitor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -253,8 +253,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-qrcode"></i> PC status</h1>
-            
+            <h1><i class="fas fa-qrcode"></i> RFID Scanner</h1>
+            <p>Scan to view PC status</p>
         </div>
 
         <div class="scan-card" id="scanCard">
@@ -268,35 +268,29 @@
     </div>
 
     <script>
-        // Supabase configuration
         const SUPABASE_URL = 'https://uxhefdybgjluzkbodryd.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4aGVmZHliZ2psdXprYm9kcnlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDExMzAsImV4cCI6MjA3NjM3NzEzMH0.jvFSOUUNiWvLFdPHplVuRgvKkvt2zlet6NA_x3mLaJM';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentPcName = '';
 
-        // Get PC name from URL parameter
         function getPcNameFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get('pc');
         }
 
-        // Auto-load PC on page load
         window.addEventListener('DOMContentLoaded', () => {
             const pcName = getPcNameFromUrl();
-
             if (!pcName) {
                 showError('No PC specified. Please scan an RFID tag or use a valid link.');
                 return;
             }
-
             currentPcName = pcName;
             loadPCInfo();
         });
 
         async function loadPCInfo() {
             try {
-                // Fetch PC status
                 const { data: statusData, error: statusError } = await supabase
                     .from('pc_status')
                     .select('*')
@@ -308,27 +302,40 @@
                     return;
                 }
 
-                // Fetch system info
                 const { data: sysInfo } = await supabase
                     .from('system_info')
                     .select('*')
                     .eq('pc_name', currentPcName)
                     .single();
 
-                displayPCInfo(statusData, sysInfo);
+                const { data: currentApp } = await supabase
+                    .from('app_usage_logs')
+                    .select('*')
+                    .eq('pc_name', currentPcName)
+                    .order('start_time', { ascending: false })
+                    .limit(1)
+                    .single();
+
+                const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+                const { data: recentApps } = await supabase
+                    .from('app_usage_logs')
+                    .select('app_name, window_title, start_time')
+                    .eq('pc_name', currentPcName)
+                    .gte('start_time', oneHourAgo)
+                    .order('start_time', { ascending: false })
+                    .limit(10);
+
+                displayPCInfo(statusData, sysInfo, currentApp, recentApps);
             } catch (error) {
                 console.error('Error:', error);
                 showError('Failed to fetch PC information. Please try again.');
             }
         }
 
-        function displayPCInfo(status, sysInfo) {
-            // Hide loading card
+        function displayPCInfo(status, sysInfo, currentApp, recentApps) {
             document.getElementById('scanCard').style.display = 'none';
-
             const pcInfo = document.getElementById('pcInfo');
 
-            // Determine status
             const isOnline = status.is_online;
             const isIdle = status.is_idle;
 
@@ -344,21 +351,33 @@
                 statusText = 'Online';
             }
 
-            // Build system info
-            const cpuInfo = sysInfo
-                ? `${sysInfo.cpu_model || 'Unknown'} (${sysInfo.cpu_cores || 'N/A'} cores)`
-                : 'N/A';
-            const ramInfo = sysInfo
-                ? `${sysInfo.total_memory_gb || 'N/A'} GB`
-                : 'N/A';
-            const osInfo = sysInfo
-                ? `${sysInfo.os_platform || 'Unknown'} ${sysInfo.os_version || ''}`
-                : 'N/A';
-            const hostname = sysInfo
-                ? sysInfo.hostname || 'Unknown'
-                : 'Unknown';
+            const currentAppName = currentApp ? currentApp.app_name : 'None';
+            const currentAppWindow = currentApp ? currentApp.window_title : 'N/A';
 
-            // Rebuild the entire PC info card
+            let recentAppsHtml = '';
+            if (recentApps && recentApps.length > 0) {
+                recentAppsHtml = recentApps.map(app => {
+                    const startTime = new Date(app.start_time);
+                    const timeStr = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                    return `
+                        <div style="padding: 10px; background: white; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #667eea;">
+                            <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">
+                                <i class="fas fa-window-maximize" style="color: #667eea; margin-right: 6px;"></i>
+                                ${app.app_name}
+                            </div>
+                            <div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 2px;">
+                                ${app.window_title || 'No title'}
+                            </div>
+                            <div style="font-size: 0.75rem; color: #9ca3af;">
+                                <i class="fas fa-clock"></i> ${timeStr}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                recentAppsHtml = '<div style="text-align: center; color: #9ca3af; padding: 20px;">No recent activity</div>';
+            }
+
             pcInfo.innerHTML = `
                 <div class="pc-header">
                     <div class="pc-name">${currentPcName}</div>
@@ -370,68 +389,56 @@
 
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label"><i class="fas fa-clock"></i> Last Seen</div>
-                        <div class="info-value">${formatDateTime(status.last_seen)}</div>
+                        <div class="info-label"><i class="fas fa-desktop"></i> Currently Opened</div>
+                        <div class="info-value">${currentAppName}</div>
+                        <div style="font-size: 0.85rem; color: #6b7280; margin-top: 5px;">${currentAppWindow}</div>
                     </div>
 
                     <div class="info-item">
                         <div class="info-label"><i class="fas fa-heartbeat"></i> Last Activity</div>
                         <div class="info-value">${formatDateTime(status.last_activity)}</div>
                     </div>
+                </div>
 
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-microchip"></i> CPU</div>
-                        <div class="info-value">${cpuInfo}</div>
+                <div style="margin-top: 25px;">
+                    <div style="font-weight: 600; color: #1f2937; margin-bottom: 15px; font-size: 1.1rem;">
+                        <i class="fas fa-history"></i> Recent Apps (Last Hour)
                     </div>
-
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-memory"></i> RAM</div>
-                        <div class="info-value">${ramInfo}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-laptop"></i> OS</div>
-                        <div class="info-value">${osInfo}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-network-wired"></i> Hostname</div>
-                        <div class="info-value">${hostname}</div>
+                    <div style="max-height: 300px; overflow-y: auto; background: #f9fafb; padding: 10px; border-radius: 12px;">
+                        ${recentAppsHtml}
                     </div>
                 </div>
 
-                
+                <div class="quick-actions">
+                    <button class="quick-btn" onclick="viewDetails()">
+                        <i class="fas fa-chart-line"></i>
+                        View Full Dashboard
+                    </button>
+                    <button class="quick-btn" onclick="loadPCInfo()">
+                        <i class="fas fa-sync"></i>
+                        Refresh
+                    </button>
+                </div>
             `;
 
-            // Show PC info card
             pcInfo.classList.add('show');
         }
 
         function formatDateTime(dateString) {
             if (!dateString) return 'Never';
-
             const date = new Date(dateString);
             const now = new Date();
             const diff = now - date;
 
-            // Less than 1 minute
-            if (diff < 60000) {
-                return 'Just now';
-            }
-
-            // Less than 1 hour
+            if (diff < 60000) return 'Just now';
             if (diff < 3600000) {
                 const mins = Math.floor(diff / 60000);
                 return `${mins} min${mins > 1 ? 's' : ''} ago`;
             }
-
-            // Less than 24 hours
             if (diff < 86400000) {
                 const hours = Math.floor(diff / 3600000);
                 return `${hours} hour${hours > 1 ? 's' : ''} ago`;
             }
-
-            // Format as date
             return date.toLocaleString('en-US', {
                 month: 'short',
                 day: 'numeric',
@@ -456,12 +463,9 @@
         }
 
         function viewDetails() {
-            // Redirect to main dashboard with PC selected
             window.location.href = `index.html?pc=${encodeURIComponent(currentPcName)}`;
         }
     </script>
 </body>
 
 </html>
-
-
