@@ -55,35 +55,6 @@
             animation: fadeInUp 0.6s ease;
         }
 
-        .scan-input-group {
-            margin-bottom: 25px;
-        }
-
-        .scan-input-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.95rem;
-        }
-
-        .scan-input-group input {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            background: #f9fafb;
-        }
-
-        .scan-input-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
         .btn {
             width: 100%;
             padding: 18px;
@@ -107,12 +78,6 @@
 
         .btn-primary:active {
             transform: scale(0.98);
-        }
-
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-            margin-top: 10px;
         }
 
         .pc-info {
@@ -205,19 +170,6 @@
             animation: spin 1s linear infinite;
         }
 
-        .error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .error.show {
-            display: block;
-        }
-
         .quick-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -300,312 +252,114 @@
 
 <body>
     <div class="container">
-        .btn-primary:active {
-        transform: scale(0.98);
-        }
+        <div class="header">
+            <h1><i class="fas fa-qrcode"></i> RFID Scanner</h1>
+            <p>Scan to view PC status</p>
+        </div>
 
-        .btn-secondary {
-        background: #f3f4f6;
-        color: #374151;
-        margin-top: 10px;
-        }
-
-        .pc-info {
-        background: white;
-        border-radius: 20px;
-        padding: 25px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-        animation: fadeInUp 0.6s ease;
-        display: none;
-        }
-
-        .pc-info.show {
-        display: block;
-        }
-
-        .pc-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #f3f4f6;
-        }
-
-        .pc-name {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #1f2937;
-        }
-
-        .status-badge {
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        }
-
-        .status-badge.online {
-        background: #d1fae5;
-        color: #065f46;
-        }
-
-        .status-badge.offline {
-        background: #fee2e2;
-        color: #991b1b;
-        }
-
-        .status-badge.idle {
-        background: #fef3c7;
-        color: #92400e;
-        }
-
-        .info-grid {
-        display: grid;
-        gap: 15px;
-        margin-top: 20px;
-        }
-
-        .info-item {
-        background: #f9fafb;
-        padding: 15px;
-        border-radius: 12px;
-        border-left: 4px solid #667eea;
-        }
-
-        .info-label {
-        font-size: 0.85rem;
-        color: #6b7280;
-        margin-bottom: 5px;
-        font-weight: 500;
-        }
-
-        .info-value {
-        font-size: 1.1rem;
-        color: #1f2937;
-        font-weight: 600;
-        }
-
-        .loading {
-        text-align: center;
-        padding: 40px;
-        color: #6b7280;
-        }
-
-        .loading i {
-        font-size: 2rem;
-        animation: spin 1s linear infinite;
-        }
-
-        .error {
-        background: #fee2e2;
-        color: #991b1b;
-        padding: 15px;
-        border-radius: 12px;
-        margin-top: 15px;
-        display: none;
-        }
-
-        .error.show {
-        display: block;
-        }
-
-        .quick-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 20px;
-        }
-
-        .quick-btn {
-        padding: 12px;
-        border: 2px solid #e5e7eb;
-        border-radius: 10px;
-        background: white;
-        color: #374151;
-        font-weight: 600;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        }
-
-        .quick-btn:active {
-        transform: scale(0.95);
-        background: #f3f4f6;
-        }
-
-        @keyframes fadeInDown {
-        from {
-        opacity: 0;
-        transform: translateY(-20px);
-        }
-
-        to {
-        opacity: 1;
-        transform: translateY(0);
-        }
-        }
-
-        @keyframes fadeInUp {
-        from {
-        opacity: 0;
-        transform: translateY(20px);
-        }
-
-        to {
-        opacity: 1;
-        transform: translateY(0);
-        }
-        }
-
-        @keyframes spin {
-        to {
-        transform: rotate(360deg);
-        }
-        }
-
-        .pulse {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: currentColor;
-        animation: pulse 2s ease infinite;
-        }
-
-        @keyframes pulse {
-
-        0%,
-        100% {
-        opacity: 1;
-        }
-
-        50% {
-        opacity: 0.5;
-        }
-        }
-        </style>
-        </head>
-
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1><i class="fas fa-qrcode"></i> RFID Scanner</h1>
-                    <p>Scan to view PC status</p>
-                </div>
-
-                <div class="scan-card" id="scanCard">
-                    <div class="loading">
-                        <i class="fas fa-spinner"></i>
-                        <p>Loading PC information...</p>
-                    </div>
-                </div>
-
-                <div class="pc-info" id="pcInfo"></div>
+        <div class="scan-card" id="scanCard">
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Loading PC information...</p>
             </div>
+        </div>
 
-            <script>
-                // Supabase configuration
-                const SUPABASE_URL = 'https://uxhefdybgjluzkbodryd.supabase.co';
-                const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4aGVmZHliZ2psdXprYm9kcnlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDExMzAsImV4cCI6MjA3NjM3NzEzMH0.jvFSOUUNiWvLFdPHplVuRgvKkvt2zlet6NA_x3mLaJM';
-                const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        <div class="pc-info" id="pcInfo"></div>
+    </div>
 
-                let currentPcName = '';
+    <script>
+        // Supabase configuration
+        const SUPABASE_URL = 'https://uxhefdybgjluzkbodryd.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4aGVmZHliZ2psdXprYm9kcnlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDExMzAsImV4cCI6MjA3NjM3NzEzMH0.jvFSOUUNiWvLFdPHplVuRgvKkvt2zlet6NA_x3mLaJM';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-                // Get PC name from URL parameter
-                function getPcNameFromUrl() {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    return urlParams.get('pc');
+        let currentPcName = '';
+
+        // Get PC name from URL parameter
+        function getPcNameFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('pc');
+        }
+
+        // Auto-load PC on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const pcName = getPcNameFromUrl();
+
+            if (!pcName) {
+                showError('No PC specified. Please scan an RFID tag or use a valid link.');
+                return;
+            }
+
+            currentPcName = pcName;
+            loadPCInfo();
+        });
+
+        async function loadPCInfo() {
+            try {
+                // Fetch PC status
+                const { data: statusData, error: statusError } = await supabase
+                    .from('pc_status')
+                    .select('*')
+                    .eq('pc_name', currentPcName)
+                    .single();
+
+                if (statusError || !statusData) {
+                    showError(`PC "${currentPcName}" not found in the system.`);
+                    return;
                 }
 
-                // Auto-load PC on page load
-                window.addEventListener('DOMContentLoaded', () => {
-                    const pcName = getPcNameFromUrl();
+                // Fetch system info
+                const { data: sysInfo } = await supabase
+                    .from('system_info')
+                    .select('*')
+                    .eq('pc_name', currentPcName)
+                    .single();
 
-                    if (!pcName) {
-                        showError('No PC specified. Please scan an RFID tag or use a valid link.');
-                        return;
-                    }
+                displayPCInfo(statusData, sysInfo);
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to fetch PC information. Please try again.');
+            }
+        }
 
-                    currentPcName = pcName;
-                    loadPCInfo();
-                });
+        function displayPCInfo(status, sysInfo) {
+            // Hide loading card
+            document.getElementById('scanCard').style.display = 'none';
 
-                async function loadPCInfo() {
-                    try {
-                        // Fetch PC status
-                        const { data: statusData, error: statusError } = await supabase
-                            .from('pc_status')
-                            .select('*')
-                            .eq('pc_name', currentPcName)
-                            .single();
+            const pcInfo = document.getElementById('pcInfo');
 
-                        if (statusError || !statusData) {
-                            showError(`PC "${currentPcName}" not found in the system.`);
-                            return;
-                        }
+            // Determine status
+            const isOnline = status.is_online;
+            const isIdle = status.is_idle;
 
-                        // Fetch system info
-                        const { data: sysInfo } = await supabase
-                            .from('system_info')
-                            .select('*')
-                            .eq('pc_name', currentPcName)
-                            .single();
+            let statusClass, statusText;
+            if (!isOnline) {
+                statusClass = 'offline';
+                statusText = 'Offline';
+            } else if (isIdle) {
+                statusClass = 'idle';
+                statusText = 'Idle';
+            } else {
+                statusClass = 'online';
+                statusText = 'Online';
+            }
 
-                        displayPCInfo(statusData, sysInfo);
-                    } catch (error) {
-                        console.error('Error:', error);
-                        showError('Failed to fetch PC information. Please try again.');
-                    }
-                }
+            // Build system info
+            const cpuInfo = sysInfo
+                ? `${sysInfo.cpu_model || 'Unknown'} (${sysInfo.cpu_cores || 'N/A'} cores)`
+                : 'N/A';
+            const ramInfo = sysInfo
+                ? `${sysInfo.total_memory_gb || 'N/A'} GB`
+                : 'N/A';
+            const osInfo = sysInfo
+                ? `${sysInfo.os_platform || 'Unknown'} ${sysInfo.os_version || ''}`
+                : 'N/A';
+            const hostname = sysInfo
+                ? sysInfo.hostname || 'Unknown'
+                : 'Unknown';
 
-                function displayPCInfo(status, sysInfo) {
-                    // Hide loading card
-                    document.getElementById('scanCard').style.display = 'none';
-
-                    const pcInfo = document.getElementById('pcInfo');
-
-                    // Determine status
-                    const isOnline = status.is_online;
-                    const isIdle = status.is_idle;
-
-                    let statusClass, statusText, statusIcon;
-                    if (!isOnline) {
-                        statusClass = 'offline';
-                        statusText = 'Offline';
-                        statusIcon = 'fa-times-circle';
-                    } else if (isIdle) {
-                        statusClass = 'idle';
-                        statusText = 'Idle';
-                        statusIcon = 'fa-moon';
-                    } else {
-                        statusClass = 'online';
-                        statusText = 'Online';
-                        statusIcon = 'fa-check-circle';
-                    }
-
-                    // Build system info
-                    const cpuInfo = sysInfo
-                        ? `${sysInfo.cpu_model || 'Unknown'} (${sysInfo.cpu_cores || 'N/A'} cores)`
-                        : 'N/A';
-                    const ramInfo = sysInfo
-                        ? `${sysInfo.total_memory_gb || 'N/A'} GB`
-                        : 'N/A';
-                    const osInfo = sysInfo
-                        ? `${sysInfo.os_platform || 'Unknown'} ${sysInfo.os_version || ''}`
-                        : 'N/A';
-                    const hostname = sysInfo
-                        ? sysInfo.hostname || 'Unknown'
-                        : 'Unknown';
-
-                    // Rebuild the entire PC info card
-                    pcInfo.innerHTML = `
+            // Rebuild the entire PC info card
+            pcInfo.innerHTML = `
                 <div class="pc-header">
                     <div class="pc-name">${currentPcName}</div>
                     <div class="status-badge ${statusClass}">
@@ -658,46 +412,46 @@
                 </div>
             `;
 
-                    // Show PC info card
-                    pcInfo.classList.add('show');
-                }
+            // Show PC info card
+            pcInfo.classList.add('show');
+        }
 
-                function formatDateTime(dateString) {
-                    if (!dateString) return 'Never';
+        function formatDateTime(dateString) {
+            if (!dateString) return 'Never';
 
-                    const date = new Date(dateString);
-                    const now = new Date();
-                    const diff = now - date;
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
 
-                    // Less than 1 minute
-                    if (diff < 60000) {
-                        return 'Just now';
-                    }
+            // Less than 1 minute
+            if (diff < 60000) {
+                return 'Just now';
+            }
 
-                    // Less than 1 hour
-                    if (diff < 3600000) {
-                        const mins = Math.floor(diff / 60000);
-                        return `${mins} min${mins > 1 ? 's' : ''} ago`;
-                    }
+            // Less than 1 hour
+            if (diff < 3600000) {
+                const mins = Math.floor(diff / 60000);
+                return `${mins} min${mins > 1 ? 's' : ''} ago`;
+            }
 
-                    // Less than 24 hours
-                    if (diff < 86400000) {
-                        const hours = Math.floor(diff / 3600000);
-                        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-                    }
+            // Less than 24 hours
+            if (diff < 86400000) {
+                const hours = Math.floor(diff / 3600000);
+                return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            }
 
-                    // Format as date
-                    return date.toLocaleString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                }
+            // Format as date
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
 
-                function showError(message) {
-                    const scanCard = document.getElementById('scanCard');
-                    scanCard.innerHTML = `
+        function showError(message) {
+            const scanCard = document.getElementById('scanCard');
+            scanCard.innerHTML = `
                 <div style="text-align: center; padding: 20px;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444; margin-bottom: 15px;"></i>
                     <h3 style="color: #991b1b; margin-bottom: 10px;">Error</h3>
@@ -708,13 +462,13 @@
                     </button>
                 </div>
             `;
-                }
+        }
 
-                function viewDetails() {
-                    // Redirect to main dashboard with PC selected
-                    window.location.href = `index.html?pc=${encodeURIComponent(currentPcName)}`;
-                }
-            </script>
-        </body>
+        function viewDetails() {
+            // Redirect to main dashboard with PC selected
+            window.location.href = `index.html?pc=${encodeURIComponent(currentPcName)}`;
+        }
+    </script>
+</body>
 
 </html>
