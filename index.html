@@ -324,14 +324,13 @@
                     .limit(1)
                     .single();
 
-                const oneMinuteAgo = new Date(Date.now() - 60 * 1000).toISOString();
+                // Get top 6 most recent apps
                 const { data: recentApps } = await supabase
                     .from('app_usage_logs')
                     .select('app_name, window_title, start_time')
                     .eq('pc_name', currentPcName)
-                    .gte('start_time', oneMinuteAgo)
                     .order('start_time', { ascending: false })
-                    .limit(10);
+                    .limit(6);
 
                 displayPCInfo(statusData, sysInfo, currentApp, recentApps);
             } catch (error) {
@@ -412,7 +411,7 @@
 
                 <div style="margin-top: 25px;">
                     <div style="font-weight: 600; color: #1f2937; margin-bottom: 15px; font-size: 1.1rem;">
-                        <i class="fas fa-history"></i> Recent Apps (Last Minute)
+                        <i class="fas fa-history"></i> Recent Apps
                     </div>
                     <div style="max-height: 300px; overflow-y: auto; background: #f9fafb; padding: 10px; border-radius: 12px;">
                         ${recentAppsHtml}
