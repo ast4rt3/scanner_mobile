@@ -289,20 +289,72 @@
                     return;
                 }
                 const { data: sysInfo } = await supabase.from('system_info').select('*').eq('pc_name', currentPcName).single();
-                displayPCInfo(statusData, sysInfo);
+
+                // Fetch app usage data using select('*') to avoid column errors
+                let currentApp = null;
+                let recentApps = [];
+                try {
+                    const { data: currentAppData } = await supabase
+                        .from('app_usage_logs')
+                        .select('*')
+                        .eq('pc_name', currentPcName)
+                        .order('start_time', { ascending: false })
+                        .limit(1)
+                        .single();
+                    currentApp = currentAppData;
+
+                    const { data: recentAppsData } = await supabase
+                        .from('app_usage_logs')
+                        .select('*')
+                        .eq('pc_name', currentPcName)
+                        .order('start_time', { ascending: false })
+                        .limit(6);
+                    recentApps = recentAppsData || [];
+                } catch (e) {
+                    console.warn('Error fetching app data:', e);
+                }
+
+                displayPCInfo(statusData, sysInfo, currentApp, recentApps);
             } catch (error) {
                 console.error('Error:', error);
                 if (!isBackgroundRefresh) showError('Failed to fetch PC information. Please try again.');
             }
         }
 
-        function displayPCInfo(status, sysInfo) {
+        function displayPCInfo(status, sysInfo, currentApp, recentApps) {
             document.getElementById('scanCard').style.display = 'none';
             const pcInfo = document.getElementById('pcInfo');
             const isOnline = status.is_online;
             const isIdle = status.is_idle;
             let statusClass = !isOnline ? 'offline' : (isIdle ? 'idle' : 'online');
             let statusText = !isOnline ? 'Offline' : (isIdle ? 'Idle' : 'Online');
+
+            const currentAppName = currentApp ? currentApp.app_name : 'None';
+            // Use window_title if available, otherwise fallback or empty
+            const currentAppWindow = currentApp && currentApp.window_title ? currentApp.window_title : '';
+
+            let recentAppsHtml = '';
+            if (recentApps && recentApps.length > 0) {
+                recentAppsHtml = recentApps.map(app => {
+                    const startTime = new Date(app.start_time);
+                    const timeStr = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    const windowTitle = app.window_title || '';
+                    return `
+                        <div style="padding: 10px; background: white; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #667eea;">
+                            <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">
+                                <i class="fas fa-window-maximize" style="color: #667eea; margin-right: 6px;"></i>
+                                ${app.app_name}
+                            </div>
+                            ${windowTitle ? `<div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 2px;">${windowTitle}</div>` : ''}
+                            <div style="font-size: 0.75rem; color: #9ca3af;">
+                                <i class="fas fa-clock"></i> ${timeStr}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                recentAppsHtml = '<div style="text-align: center; color: #9ca3af; padding: 20px;">No recent activity</div>';
+            }
 
             pcInfo.innerHTML = `
                 <div class="pc-header">
@@ -314,8 +366,21 @@
                 </div>
                 <div class="info-grid">
                     <div class="info-item">
+                        <div class="info-label"><i class="fas fa-desktop"></i> Currently Opened</div>
+                        <div class="info-value">${currentAppName}</div>
+                        <div style="font-size: 0.85rem; color: #6b7280; margin-top: 5px;">${currentAppWindow}</div>
+                    </div>
+                    <div class="info-item">
                         <div class="info-label"><i class="fas fa-heartbeat"></i> Last Activity</div>
                         <div class="info-value">${formatDateTime(status.last_activity)}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 25px;">
+                    <div style="font-weight: 600; color: #1f2937; margin-bottom: 15px; font-size: 1.1rem;">
+                        <i class="fas fa-history"></i> Recent Apps
+                    </div>
+                    <div style="max-height: 300px; overflow-y: auto; background: #f9fafb; padding: 10px; border-radius: 12px;">
+                        ${recentAppsHtml}
                     </div>
                 </div>
                 <div class="quick-actions">
