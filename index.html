@@ -308,7 +308,7 @@
                         .select('*')
                         .eq('pc_name', currentPcName)
                         .order('start_time', { ascending: false })
-                        .limit(6);
+                        .limit(4); // Limited to 4 apps
                     recentApps = recentAppsData || [];
                 } catch (e) {
                     console.warn('Error fetching app data:', e);
@@ -356,6 +356,33 @@
                 recentAppsHtml = '<div style="text-align: center; color: #9ca3af; padding: 20px;">No recent activity</div>';
             }
 
+            // System Info Section
+            const systemInfoHtml = sysInfo ? `
+                <div style="margin-top: 25px; border-top: 2px solid #f3f4f6; padding-top: 20px;">
+                    <div style="font-weight: 600; color: #1f2937; margin-bottom: 15px; font-size: 1.1rem;">
+                        <i class="fas fa-server"></i> System Specs
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                        <div class="info-item" style="padding: 12px; border-left: 3px solid #10b981;">
+                            <div class="info-label"><i class="fas fa-microchip"></i> CPU Model</div>
+                            <div class="info-value" style="font-size: 0.95rem;">${sysInfo.cpu_model || 'N/A'}</div>
+                        </div>
+                        <div class="info-item" style="padding: 12px; border-left: 3px solid #10b981;">
+                            <div class="info-label"><i class="fas fa-memory"></i> RAM Size</div>
+                            <div class="info-value" style="font-size: 0.95rem;">${sysInfo.total_memory_gb || 'N/A'} GB</div>
+                        </div>
+                        <div class="info-item" style="padding: 12px; border-left: 3px solid #10b981;">
+                            <div class="info-label"><i class="fab fa-windows"></i> OS</div>
+                            <div class="info-value" style="font-size: 0.95rem;">${sysInfo.os_platform || 'N/A'}</div>
+                        </div>
+                        <div class="info-item" style="padding: 12px; border-left: 3px solid #10b981;">
+                            <div class="info-label"><i class="fas fa-code-branch"></i> OS Version</div>
+                            <div class="info-value" style="font-size: 0.95rem;">${sysInfo.os_version || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+
             pcInfo.innerHTML = `
                 <div class="pc-header">
                     <div class="pc-name">${currentPcName}</div>
@@ -383,14 +410,7 @@
                         ${recentAppsHtml}
                     </div>
                 </div>
-                <div class="quick-actions">
-                    <button class="quick-btn" onclick="window.location.href='index.html?pc=${encodeURIComponent(currentPcName)}'">
-                        <i class="fas fa-chart-line"></i> View Full Dashboard
-                    </button>
-                    <button class="quick-btn" onclick="loadPCInfo()">
-                        <i class="fas fa-sync"></i> Refresh
-                    </button>
-                </div>
+                ${systemInfoHtml}
             `;
             pcInfo.classList.add('show');
         }
